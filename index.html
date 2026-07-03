@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Ming Yue</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #fff0f6 0%, #f3e8ff 100%); 
+            color: #222;
+        }
+        header {
+            background-color: #ffffff;
+            border-bottom: 4px solid #ff007f; 
+            padding: 35px 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 0, 127, 0.1);
+        }
+        h1 {
+            color: #ff007f;
+            text-shadow: 0 0 10px rgba(255, 0, 127, 0.2);
+            margin: 0 0 15px 0;
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto 25px auto;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 14px 25px;
+            border: 3px solid #bc00dd; 
+            border-radius: 30px;
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 600;
+            background-color: #fffbfe;
+        }
+        .search-container input:focus {
+            border-color: #ff007f;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
+            background-color: #ffffff;
+        }
+        .categories {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .category-btn {
+            background-color: #ffffff;
+            color: #bc00dd;
+            border: 2px solid #bc00dd;
+            padding: 10px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.25s ease;
+        }
+        .category-btn.active, .category-btn:hover {
+            background: linear-gradient(90deg, #ff007f 0%, #bc00dd 100%);
+            color: #ffffff;
+            border-color: #ff007f;
+            box-shadow: 0 4px 10px rgba(255, 0, 127, 0.3);
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px 80px 20px;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+        .product-card {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+            border: 2px solid #fff0f6;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .product-card:hover {
+            transform: translateY(-8px);
+            border-color: #ff007f;
+            box-shadow: 0 8px 25px rgba(255, 0, 127, 0.2);
+        }
+        .product-img-wrapper {
+            width: 100%;
+            height: 190px;
+            background-color: #faf0f5;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .product-img {
+            width: 100%;
+            height: 100%;
+            background-position: center;
+            background-size: contain; 
+            background-repeat: no-repeat;
+            transition: transform 0.3s ease;
+        }
+        .product-card:hover .product-img {
+            transform: scale(1.05);
+        }
+        .product-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #333;
+            margin: 5px 0;
+            height: 40px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #ff007f;
+            margin: 8px 0;
+        }
+        .details-btn {
+            background: linear-gradient(90deg, #bc00dd 0%, #ff007f 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px; 
+            cursor: pointer;
+            font-weight: 700;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 8px rgba(188, 0, 221, 0.2);
+        }
+        .details-btn:hover {
+            background: linear-gradient(90deg, #ff007f 0%, #bc00dd 100%);
+            box-shadow: 0 4px 12px rgba(255, 0, 127, 0.4);
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 0, 20, 0.75);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            background: #ffffff;
+            width: 92%;
+            max-width: 550px;
+            border-radius: 20px;
+            padding: 30px 25px 25px 25px;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(255, 0, 127, 0.3);
+            text-align: center;
+            border: 3px solid #ff007f;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .close-modal {
+            position: absolute;
+            top: 12px; right: 15px;
+            font-size: 32px; font-weight: 900;
+            color: #ff007f; border: none; background: none;
+            cursor: pointer; z-index: 10;
+            transition: transform 0.2s;
+        }
+        .close-modal:hover { transform: scale(1.15); }
+        .modal-slider {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: #fff9fc;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 1px solid #ffe6f2;
+        }
+        .slider-track {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
+        }
+        .modal-img-container {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff9fc;
+        }
+        .modal-img {
+            width: 100%;
+            height: 100%;
+            background-position: center;
+            background-size: contain; 
+            background-repeat: no-repeat;
+        }
+        .slider-arrow {
+            position: absolute;
+            top: 50%; transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid #ff007f;
+            color: #ff007f; 
+            font-size: 1.8rem; font-weight: bold;
+            cursor: pointer; width: 45px; height: 45px;
+            display: flex; align-items: center; justify-content: center;
+            user-select: none; border-radius: 50%;
+            z-index: 5;
+            box-shadow: 0 0 10px rgba(255,0,127,0.2);
+            transition: all 0.2s;
+        }
+        .slider-arrow:hover { 
+            background: #ff007f;
+            color: #ffffff;
+            box-shadow: 0 0 12px #ff007f;
+        }
+        .arrow-left { left: 10px; }
+        .arrow-right { right: 10px; }
+        .modal-title { font-size: 1.5rem; color: #111; margin: 10px 0; font-weight: 700; }
+        .modal-price { font-size: 1.7rem; color: #ff007f; font-weight: 800; margin: 5px 0; }
+        .modal-desc { font-size: 1rem; color: #444; margin: 15px 0; line-height: 1.6; text-align: left; background: #fff5fa; padding: 15px; border-radius: 12px; border-left: 4px solid #bc00dd; max-height: 180px; overflow-y: auto;}
+        .whatsapp-btn-modal {
+            background-color: #25D366;
+            color: white; border: none;
+            padding: 14px 25px; border-radius: 30px;
+            font-size: 1.1rem; font-weight: bold;
+            cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+            text-decoration: none; margin-top: 10px; width: 100%;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+            transition: all 0.2s;
+        }
+        .whatsapp-btn-modal:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(37, 211, 102, 0.6); }
+        .whatsapp-floating {
+            position: fixed;
+            bottom: 25px; right: 25px;
+            background-color: #25D366; color: white;
+            width: 65px; height: 65px; border-radius: 50%;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            z-index: 999; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; transition: transform 0.2s;
+        }
+        .whatsapp-floating:hover { transform: scale(1.08); }
+        .whatsapp-floating svg { width: 34px; height: 34px; fill: white; }
+        @media(max-width: 1200px) { .products-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media(max-width: 950px) { .products-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media(max-width: 700px) { .products-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Catálogo Ming Yue</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="¿Qué placer buscas hoy? 😈✨" oninput="filterProducts()">
+        </div>
+        <div class="categories" id="categoriesContainer">
+            <button class="category-btn active" onclick="selectCategory('Todos')">Todos</button>
+            <button class="category-btn" onclick="selectCategory('Vibradores')">Vibradores</button>
+            <button class="category-btn" onclick="selectCategory('Anal')">Anal</button>
+            <button class="category-btn" onclick="selectCategory('Masculino')">Masculino</button>
+            <button class="category-btn" onclick="selectCategory('Bondage')">Bondage</button>
+            <button class="category-btn" onclick="selectCategory('Cuidado y Salud')">Cuidado y Salud</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="products-grid" id="productsGrid"></div>
+    </div>
+
+    <div class="modal-overlay" id="productModal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-modal" onclick="toggleModal(false)">&times;</button>
+            <div class="modal-slider">
+                <button class="slider-arrow arrow-left" onclick="changeImage(-1)">&#10094;</button>
+                <div class="slider-track" id="sliderTrack"></div>
+                <button class="slider-arrow arrow-right" onclick="changeImage(1)">&#10095;</button>
+            </div>
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-price" id="modalPrice"></div>
+            <div class="modal-desc" id="modalDesc"></div>
+            <a href="#" id="whatsappModalLink" target="_blank" class="whatsapp-btn-modal">
+                <svg width="22" height="22" fill="white" viewBox="0 0 24 24" style="margin-right: 12px;"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.713-1.457L0 24zm6.59-4.846c1.6.95 3.488 1.451 5.416 1.452 5.352 0 9.709-4.357 9.713-9.713.002-2.595-1.005-5.035-2.834-6.867-1.83-1.832-4.27-2.839-6.864-2.84-5.356 0-9.712 4.356-9.716 9.715-.001 1.97.513 3.894 1.49 5.609l-.995 3.637 3.732-.979zm11.385-6.86c-.29-.145-1.713-.846-1.978-.942-.266-.097-.459-.145-.653.145-.193.29-.747.942-.916 1.135-.169.193-.338.217-.628.072-1.34-.673-2.203-1.182-3.076-2.684-.23-.396.23-.367.658-1.221.072-.145.036-.271-.018-.38-.054-.109-.459-1.107-.629-1.516-.165-.396-.333-.342-.459-.348-.119-.006-.254-.007-.389-.007-.135 0-.356.05-.542.254-.186.203-.711.694-.711 1.694 0 1 .727 1.968.829 2.102.102.134 1.43 2.184 3.464 3.064.483.21 1.056.335 1.417.449.492.156.94.134 1.295.081.396-.06 1.713-.7 1.954-1.376.241-.676.241-1.254.169-1.376-.073-.122-.266-.193-.555-.338z"/></svg>
+                Consultar disponibilidad
+            </a>
+        </div>
+    </div>
+
+    <a href="https://wa.me/593969999363?text=Hola,%20quiero%20información%20sobre%20el%20catálogo" target="_blank" class="whatsapp-floating">
+        <svg viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.713-1.457L0 24zm6.59-4.846c1.6.95 3.488 1.451 5.416 1.452 5.352 0 9.709-4.357 9.713-9.713.002-2.595-1.005-5.035-2.834-6.867-1.83-1.832-4.27-2.839-6.864-2.84-5.356 0-9.712 4.356-9.716 9.715-.001 1.97.513 3.894 1.49 5.609l-.995 3.637 3.732-.979zm11.385-6.86c-.29-.145-1.713-.846-1.978-.942-.266-.097-.459-.145-.653.145-.193.29-.747.942-.916 1.135-.169.193-.338.217-.628.072-1.34-.673-2.203-1.182-3.076-2.684-.23-.396.23-.367.658-1.221.072-.145.036-.271-.018-.38-.054-.109-.459-1.107-.629-1.516-.165-.396-.333-.342-.459-.348-.119-.006-.254-.007-.389-.007-.135 0-.356.05-.542.254-.186.203-.711.694-.711 1.694 0 1 .727 1.968.829 2.102.102.134 1.43 2.184 3.464 3.064.483.21 1.056.335 1.417.449.492.156.94.134 1.295.081.396-.06 1.713-.7 1.954-1.376.241-.676.241-1.254.169-1.376-.073-.122-.266-.193-.555-.338z"/></svg>
+    </a>
+
+    <script>
+        const PRODUCTS = [
+            { id: 1, name: "Vibrador de Succión Thermo-Pro", price: "$26.99", category: "Vibradores", images: ["https://i.ibb.co/b57R7fk6/Captura-de-pantalla-2026-02-05-150610.png", "https://i.ibb.co/4QgZCM1/Captura-de-pantalla-2026-02-05-150416.png", "https://i.ibb.co/gFDC2yhD/Captura-de-pantalla-2026-02-05-150723.png"], desc: "Vibrador de alta gama con tecnología Thermo-Pro. Combina succión pulsante y un sistema de calentamiento térmico para elevar la estimulación al máximo nivel." },
+            { id: 2, name: "Huevo Vibrador Elegance", price: "$24.99", category: "Vibradores", images: ["https://i.ibb.co/sv7mH1qN/Captura-de-pantalla-2026-02-05-151825.png", "https://i.ibb.co/mC4yHsZG/Captura-de-pantalla-2026-02-05-152117.png", "https://i.ibb.co/Y7zC5SF6/Captura-de-pantalla-2026-02-05-152136.png"], desc: "Elegante huevo vibrador inalámbrico de textura ultra sedosa. Ofrece múltiples intensidades controladas a distancia, perfecto para juegos discretos." },
+            { id: 3, name: "JJLBRO Men’s Spray AZUL XXL", price: "$21.99", category: "Cuidado y Salud", images: ["https://i.ibb.co/PGR1pnNX/images-5.jpg", "https://i.ibb.co/yB8pD3Gq/Whats-App-Image-2026-01-08-at-10-02-33-AM-1.jpg"], desc: "Spray retardante masculino de uso externo formulado para reducir la hipersensibilidad, permitiendo prolongar la duración del acto íntimo." },
+            { id: 4, name: "Consolador Doble Placer", price: "$29.99", category: "Vibradores", images: ["https://i.ibb.co/6cR9VX6C/vr-102-006-a3109a22247aa3607317229591213792-1024-1024.webp", "https://i.ibb.co/svP1wRkp/vr-102-001-99eb14b861730cbf5117229591215865-1024-1024.webp", "https://i.ibb.co/35dZkgxX/vr-102-002-572e3bb9158d394fee17229591214269-1024-1024.webp"], desc: "Consolador de doble extremo diseñado con flexibilidad anatómica para estimulación simultánea. Ideal para compartir en pareja o aventuras intensas." },
+            { id: 5, name: "Vibrador Dual App", price: "$36.99", category: "Vibradores", images: ["https://i.ibb.co/RkXdKcmf/41-ZAGW4-Ceg-L-UL1200.jpg", "https://i.ibb.co/SDGK8byt/51v2i-Fw2yg-L-UL1200.jpg", "https://i.ibb.co/FbT6dLhW/51l1-MES7-KPL-UL1200.jpg"], desc: "Estimulador premium con conectividad Bluetooth para sincronizar con aplicaciones móviles. Permite el control interactivo de patrones desde cualquier distancia." },
+            { id: 6, name: "Licking Pig (Cerdito Lamedor)", price: "$19.99", category: "Vibradores", images: ["https://i.ibb.co/b5fVfRqM/71-FKM02833-L-AC-SX425.jpg", "https://i.ibb.co/B2mQDsLM/71z22-Kv-B4-JL-AC-SX425.jpg", "https://i.ibb.co/0VZdMznw/814-NMZFUCNL-AC-SX425.jpg"], desc: "Divertido estimulador con función de lengüeta lamedora de alta frecuencia. Suave silicona médica ideal para el clítoris y zonas externas erógenas." },
+            { id: 7, name: "Anillo de Dedo Vibrador", price: "$13.99", category: "Vibradores", images: ["https://i.ibb.co/mVhSQ6gv/9modosrecargables-Skin-Touch-Sensitive-Tooth5.webp", "https://i.ibb.co/Y4p5VBmH/Photoroom-20240224-120743.webp"], desc: "Minivibrador ergonómico que se adapta al dedo. Cuenta con 9 modos recargables y tecnología sensible al tacto para caricias íntimas." },
+            { id: 8, name: "Vibrador Lamedor Doggie", price: "$19.99", category: "Vibradores", images: ["https://i.ibb.co/cKDYpBJ8/Luoi-liem-rung-lilo-hinh-gau-06-jpg.webp", "https://i.ibb.co/5gpgx1gk/D-Q-NP-2-X-869433-MLA84849011119-052025-F.webp"], desc: "Masajeador íntimo con un tierno diseño que esconde un potente motor lamedor. Ideal para estimulación clitoridiana focalizada y ritmos lúdicos." },
+            { id: 9, name: "Bolas Kegel Premium", price: "$21.99", category: "Cuidado y Salud", images: ["https://i.ibb.co/wN82Qz6v/D-NQ-NP-2-X-755033-MEC73990333579-012024-F.webp", "https://i.ibb.co/cSN7tdtN/D-NQ-NP-2-X-696779-MEC73888540720-012024-F.webp"], desc: "Ejercitadores de suelo pélvico premium. Diseñados con contrapesos internos para fortalecer la musculatura íntima de forma cómoda." },
+            { id: 10, name: "Plug Vibrador PERNO Luxury", price: "$26.99", category: "Anal", images: ["https://i.ibb.co/9ktXxgWs/PLUG.jpg", "https://i.ibb.co/S7mTfrY1/Whats-App-Image-2026-01-04-at-4-26-57-PM.jpg"], desc: "Plug anal de diseño metálico vanguardista tipo perno de lujo. Combina un peso ideal con un potente motor vibratorio para sensaciones anales plenas." },
+            { id: 11, name: "Vibrador Rosado 3 en 1", price: "$31.99", category: "Vibradores", images: ["https://i.ibb.co/pvQk45pk/Whats-App-Image-2026-01-04-at-4-52-51-PM.jpg", "https://i.ibb.co/whqGyQbb/Whats-App-Image-2026-01-04-at-4-52-51-PM-1.jpg"], desc: "Juguete multifuncional versátil de estimulación triple. Su diseño articulado cubre simultáneamente el punto G, el clítoris y la zona anal." },
+            { id: 12, name: "Huevo Vibrador Texturizado", price: "$22.00", category: "Vibradores", images: ["https://i.ibb.co/svRbMbtR/Captura-de-pantalla-2026-02-05-152638.png", "https://i.ibb.co/Kx3sxDg6/w-1200-h-1200-fit-pad.webp"], desc: "Bala/huevo estimulador recubierto con relieves ergonómicos y ondas texturizadas que incrementan la fricción placentera en cada patrón." },
+            { id: 13, name: "Huevo Vibrador Honey Peach", price: "$38.99", category: "Vibradores", images: ["https://i.ibb.co/MxrSRmm5/D-NQ-NP-2-X-735807-MEC85370225339-052025-F.webp", "https://i.ibb.co/1YNnjC2V/D-NQ-NP-2-X-907172-MEC85370008903-052025-F.webp"], desc: "Huevo vibrador inteligente de alta gama. Diseño estético inspirado en un durazno, con silicona aterciopelada y ritmos intensos." },
+            { id: 14, name: "JJLBRO Balanus 60MIN Gel", price: "$21.99", category: "Cuidado y Salud", images: ["https://i.ibb.co/b5h82TC8/D-Q-NP-962886-CBT97879062022-112025-B.webp", "https://i.ibb.co/pBk9LZgx/Whats-App-Image-2026-01-07-at-3-28-02-PM.jpg"], desc: "Gel retardante masculino concentrado de larga duración. Su acción desensibilizante ligera ayuda a mitigar el umbral de excitación." },
+            { id: 15, name: "Vibrador de Próstata y Perineo App", price: "$24.99", category: "Masculino", images: ["https://i.ibb.co/d0ZLN7g2/D-Q-NP-935183-MCO92678233221-092025-B.webp", "https://i.ibb.co/dJ6q6PK6/D-NQ-NP-743166-MCO82816964189-032025-OO.jpg"], desc: "Estimulador anatómico de punto P (próstata) y perineo. Operable por medio de una app móvil para personalizar frecuencias masculinas." },
+            { id: 16, name: "Vibrador Inteligente Rosado Luxe", price: "$34.99", category: "Vibradores", images: ["https://i.ibb.co/9mSr5c5T/Consolador-Vibrador-con-Aplicativo-Rosado-9-Modos-Bluetooth2.webp", "https://i.ibb.co/zVCDW9KP/Consolador-Vibrador-con-Aplicativo-Rosado-9-Modos-Bluetooth3.webp"], desc: "Consolador vibrador de lujo de 9 modos con chip Bluetooth incorporado. Material ultra flexible y acoplable a smartphones." },
+            { id: 17, name: "Muñeca Realista Medio Torso (26cm)", price: "$66.99", category: "Masculino", images: ["https://i.ibb.co/RTY86HMP/D-Q-NP-697942-MLM99592378516-122025-B.webp", "https://i.ibb.co/9kmj52TF/D-NQ-NP-845351-MLM100077326519-122025-OO.jpg"], desc: "Medio torso compacto texturizado con acabados hiperrealistas de TPE. Canales internos elásticos para emular una sensación natural." },
+            { id: 18, name: "Torso Realista 2 en 1", price: "$74.99", category: "Masculino", images: ["https://i.ibb.co/5x5CWYF6/D-Q-NP-935392-MLM92383261915-092025-B.webp", "https://i.ibb.co/bgWGFyrz/D-NQ-NP-756166-MLM83062830129-032025-OO.jpg"], desc: "Estructura de torso de tamaño superior con doble canal de penetración realista. Material denso, suave e higiénico." },
+            { id: 19, name: "Gel 2 en 1 Agrandador Huge Men", price: "$19.99", category: "Cuidado y Salud", images: ["https://i.ibb.co/2LZNTBf/descarga.jpg", "https://i.ibb.co/TDCQHkXN/images-2.jpg"], desc: "Crema gel formulada para masajes extensores íntimos masculinos. Ayuda a potenciar la microcirculación cavernosa periférica aportando vigor." },
+            { id: 20, name: "Max Man Enlarging Gel", price: "$23.99", category: "Cuidado y Salud", images: ["https://i.ibb.co/4nxJ5hN7/Hf7cd779a29014c459206384c45b5e683d.jpg", "https://i.ibb.co/FbzLNsgL/ad76b768-3445-4862-bc7c-07be1ade94fc-f5b238af444c96e5e38645e5a3b17e23.webp"], desc: "Gel masculino de absorción rápida enriquecido con activos vasodilatadores naturales para optimizar el bombeo sanguíneo." },
+            { id: 21, name: "Gel Black Gold", price: "$24.99", category: "Cuidado y Salud", images: ["https://i.ibb.co/ZpK7HkkP/61-Nsp-Jxg-UXL-AC-SL1024.jpg", "https://i.ibb.co/tTrRpMnj/713-w-WPCvs-L-AC-SX425.jpg"], desc: "Edición especial de gel íntimo para miembros masculinos. Ideal para rutinas de Jelqing, incrementando la elasticidad cutánea." },
+            { id: 22, name: "Bomba al Vacío Kit", price: "$24.99", category: "Masculino", images: ["https://i.ibb.co/vvTs6TwG/Whats-App-Image-2025-07-25-at-8-16-56-PM.jpg", "https://i.ibb.co/hJgSJM6G/Whats-App-Image-2025-09-04-at-10-12-08-AM.jpg"], desc: "Kit completo de cilindro de vacío con palanca de extracción manual. Diseñado para entrenar los tejidos erectores masculinos." },
+            { id: 23, name: "Bomba PowerUp Morada", price: "$29.99", category: "Masculino", images: ["https://i.ibb.co/LLtXb7j/bomba-morada.png", "https://i.ibb.co/8gmvRbcL/Whats-App-Image-2025-09-04-at-10-10-52-AM.jpg"], desc: "Elegante cilindro de succión morado con anillo sellador ergonómico y válvula de liberación rápida. Brinda un estímulo de vacío óptimo." },
+            { id: 24, name: "Procomil Spray Original", price: "$18.99", category: "Cuidado y Salud", images: ["https://i.ibb.co/GfWQ0mC7/3d3f15c0-65e8-4118-afff-a27af54b19f6.jpg", "https://i.ibb.co/WWhdKNfw/H9ba38916106a4e9e96429103f5ba4d3c-C.png"], desc: "Famoso spray desensibilizante tópico masculino de alta fidelidad. Ayuda a mitigar los impulsos intensos para maximizar la resistencia." },
+            { id: 25, name: "JJLBRO Men’s XXL Cream", price: "$19.99", category: "Cuidado y Salud", images: ["https://i.ibb.co/Q3cdLqNy/615-EPe5m-MZL-AC-SY355.jpg", "https://i.ibb.co/d0zkMb2b/D-NQ-NP-736643-MLM84172564212-052025-O.webp"], desc: "Crema humectante y estimulante para masajes vasculares masculinos. Suave fórmula de rápida acción para potenciar el vigor." },
+            { id: 26, name: "Gel JJLBRO Extra Sensation", price: "$18.99", category: "Cuidado y Salud", images: ["https://i.ibb.co/kgDrhFg6/41g-TE18y-EGL-AC-SX425.jpg", "https://i.ibb.co/xSRDDbVZ/812-Uu-SLt-Tc-L-AC-SX425.jpg"], desc: "Gel íntimo lubricante formulado con agentes de hormigueo para amplificar exponencialmente la sensibilidad nerviosa y el roce." },
+            { id: 27, name: "Pinza de Incontinencia para Pene", price: "$11.99", category: "Cuidado y Salud", images: ["https://i.ibb.co/VWdNQZdV/Whats-App-Image-2026-01-04-at-4-39-12-PM-1.jpg", "https://i.ibb.co/tp3nBG2p/descarga.png"], desc: "Dispositivo de soporte anatómico almohadillado diseñado para la contención ligera y cómoda de la incontinencia urinaria masculina." },
+            { id: 28, name: "Vibrador Succionador Rosa Real", price: "$29.99", category: "Vibradores", images: ["https://i.ibb.co/3y4vVqjv/61p-Ty-Qt-Ny-PL-AC-SX425.jpg", "https://i.ibb.co/qLYs9Kyn/619-Qdz-Rq-Ub-L-AC-SX425.jpg"], desc: "Succionador de clítoris premium en un hermoso y discreto acabado de flor rosa. Genera pulsaciones por ondas de aire sin contacto directo." },
+            { id: 29, name: "Bala Juguete Sexual Anal x3", price: "$17.99", category: "Anal", images: ["https://i.ibb.co/5zrc7Ly/21-D9q-YN4-KKS-AC-SX425.jpg", "https://i.ibb.co/CpT4K5m4/photo-2026-01-08-15-07-40.jpg"], desc: "Set de tres estimuladores anales cónicos de tamaños progresivos. Ideales para la dilatación segura con base de recuperación anticaídas." },
+            { id: 30, name: "Micrófono Vibrador Recargable", price: "$32.99", category: "Vibradores", images: ["https://i.ibb.co/TD2mZQGB/photo-2026-01-12-17-43-22.jpg", "https://i.ibb.co/FLNW90BZ/photo-2026-01-12-17-43-29.jpg"], desc: "Masajeador corporal de varita pesada estilo micrófono. Motor ultra potente recargable para vibraciones musculares o íntimas masivas." },
+            { id: 31, name: "Vibrador 2 en 1 Clítoris y Punto G", price: "$24.99", category: "Vibradores", images: ["https://i.ibb.co/VY6R5sFL/photo-2026-01-12-17-52-20.jpg", "https://i.ibb.co/sp5xXH8z/photo-2026-01-12-17-52-20-2.jpg"], desc: "Estimulador dual flexible con eje curvo optimizado para encajar sobre el punto G vaginal y estimulador externo de conejo para el clítoris." },
+            { id: 32, name: "Set de 3 Plugs Anal 'Piña'", price: "$22.99", category: "Anal", images: ["https://i.ibb.co/32ndkZC/photo-2024-06-13-15-03-10.jpg", "https://i.ibb.co/Xfx5xZyd/photo-2026-01-08-14-46-40.jpg"], desc: "Trío de plugs de silicona con base joya texturizada tipo piña. Tres dimensiones ideales para entrenamiento anal gradu." },
+            { id: 33, name: "Bozal con Esfera y Pinzas de Pezón", price: "$17.99", category: "Bondage", images: ["https://i.ibb.co/qMvLTFgN/photo-2026-01-08-14-20-40.jpg", "https://i.ibb.co/Df84XjVF/photo-2026-01-08-14-21-03.jpg"], desc: "Kit de sumisión bondage que integra un bozal con mordaza de bola transpirable y pinzas metálicas regulables unidas para pezones." },
+            { id: 34, name: "Bozal Sencillo Bondage", price: "$12.99", category: "Bondage", images: ["https://i.ibb.co/RGMRSM9B/61t-Bpnho-UXL-AC-SX425.jpg", "https://i.ibb.co/tw9KV2TV/photo-2026-01-08-13-05-37.jpg"], desc: "Mordaza de correa ajustable fabricada en cuero sintético y bola de silicona sólida inodora para juegos de rol fetichistas." },
+            { id: 35, name: "Bala Vibradora Doble Rosada", price: "$17.99", category: "Vibradores", images: ["https://i.ibb.co/Kp5pgXFh/photo-2026-01-07-12-33-17.jpg", "https://i.ibb.co/rRkKqrnV/51-Nasael-Nx-L-AC-SX425.jpg"], desc: "Sistema doble de balas estimuladoras enlazadas a un único control de potencia. Permite masajear dos zonas íntimas simultáneamente." },
+            { id: 36, name: "Masturbador de Vacío Automático", price: "$41.99", category: "Masculino", images: ["https://i.ibb.co/HTKrRd5M/photo-2026-01-05-17-58-47.jpg", "https://i.ibb.co/TMKJDYCt/61xj-JVFnhl-L-AC-SX425.jpg"], desc: "Copa masturbadora tecnológica para hombres con motor inteligente de succión cíclica y vacío asistido. Ofrece texturas internas intensas." },
+            { id: 37, name: "Dildo Tapón Anal Felix Espiral", price: "$21.99", category: "Anal", images: ["https://i.ibb.co/bMyNXgKD/1-org-zoom.webp", "https://i.ibb.co/JWpQVQf8/photo-2026-01-05-17-48-19.jpg"], desc: "Dilatador anal flexible modelo Felix con anillos concéntricos en espiral para sensaciones de paso escalonadas muy placenteras." },
+            { id: 38, name: "VIGA 50000 SPRAY Retardante", price: "$21.99", category: "Cuidado y Salud", images: ["https://i.ibb.co/gL3FZcZf/descarga-4.jpg", "https://i.ibb.co/wrdjR7Yg/descarga-3.jpg"], desc: "Spray de uso externo masculino retardante premium con Vitamina E. Desensibiliza sutilmente para mitigar el clímax precoz." },
+            { id: 39, name: "Vibrador Doble Cabezal Top 10F", price: "$30.00", category: "Vibradores", images: ["https://i.ibb.co/67cD3HsZ/extra-11161321.jpg", "https://i.ibb.co/SXRbCZPK/25-500x500.webp"], desc: "Potente estimulador de clítoris portátil con doble extremo activo y 10 ritmos de masaje independientes. Recargable e impermeable." },
+            { id: 40, name: "Conejo Vibrador Masaje G 10V", price: "$29.99", category: "Vibradores", images: ["https://i.ibb.co/TBrJjc4P/images-6.jpg", "https://i.ibb.co/cWsntgJ/41d0-TZ7-NNy-L-AC-SX679.jpg"], desc: "Estimulador de silicona y ABS de baja emisión acústica. 10 velocidades enfocadas en masajear el punto G interno y las aletas externas." },
+            { id: 41, name: "Conejo Vibrador Frecuencias AV", price: "$29.99", category: "Vibradores", images: ["https://i.ibb.co/0pMZkf1c/D-NQ-NP-2-X-606538-MEC100382239914-122025-F.webp", "https://i.ibb.co/TBPN1Hbq/D-NQ-NP-2-X-829547-MEC100382003338-122025-F.webp"], desc: "Vibrador de clítoris y punto G ergonómico. Fabricado en sedoso gel de sílice inocuo para el cuerpo, impermeable y con potentes motores." },
+            { id: 42, name: "Vibrador Conejo Waterproof 10S", price: "$29.99", category: "Vibradores", images: ["https://i.ibb.co/zWX5jfxh/He4ca39722b604b4c84aeacb2a77891d9-Q.jpg", "https://i.ibb.co/FqywjTfF/Hab014afb6e1b4ec9bbf7d188c77d9b89v.jpg"], desc: "Consolador estilo conejo de 10 modos con relieves estimulantes. Medidas ideales (36x213mm) y 100% sumergible." },
+            { id: 43, name: "Anillo Vibrador Masculino Elastic", price: "$17.00", category: "Masculino", images: ["https://i.ibb.co/xKQTZ3LS/anillo-vibrador-ecuador-1-500x500.webp", "https://i.ibb.co/chJdy9tR/61ua-y8-Mq-KL-AC-SX522.jpg"], desc: "Accesorio de silicona médica ultra flexible y elástica. Potencia la erección y brinda estímulo dual con relieves hacia el clítoris." },
+            { id: 44, name: "Succionador de Clítoris Rosa Premium", price: "$45.00", category: "Vibradores", images: ["https://i.ibb.co/3Y0xGWx2/D-NQ-NP-709048-MLM77666738946-072024-OO.jpg", "https://i.ibb.co/VcRFkgZ6/D-NQ-NP-909978-MLM77666738944-072024-OO.jpg"], desc: "Alta tecnología ergonómica con 7 intensas ondas de succión de aire sin contacto. Sumergible, hipoalergénico y recargable." },
+            { id: 45, name: "Minivibrador Micrófono Flexible", price: "$24.99", category: "Vibradores", images: ["https://i.ibb.co/bM4m9rjm/Whats-App-Image-2022-01-20-at-13-11-20-2.webp", "https://i.ibb.co/nqYn9NfZ/61l0u3yco-VL-AC-SX679.jpg"], desc: "Masajeador estilo varita de cuello flexible y recargable. Ideal para estimulación externa e íntima focalizada. Mantener resguardado del agua." },
+            { id: 46, name: "Dildo Giratorio Perfect Orgasm 7.9''", price: "$44.99", category: "Vibradores", images: ["https://i.ibb.co/57b0TBv/descarga-5.jpg", "https://i.ibb.co/5hLc5D0W/1-10-d41e14d2-2429-4d47-8e8d-81e36fee9e2d.webp"], desc: "Impresionante dildo de 10 velocidades con sistema de giro rotatorio integrado y control remoto con cable. Ventosa ultra fuerte en la base." },
+            { id: 47, name: "Lubricante Kailin Lemon 30ml", price: "$12.99", category: "Cuidado y Salud", images: ["https://i.ibb.co/84XF1hQ3/Kailin-lemon-4.jpg", "https://i.ibb.co/FkQRkxNd/Kailin-lemon-8-copia.jpg"], desc: "Lubricante íntimo premium a base de agua con un delicioso aroma cítrico a limón. Textura sedosa, no grasosa y totalmente apto para juguetes." },
+            { id: 48, name: "Masajeador Corporal Massage Stick", price: "$29.99", category: "Vibradores", images: ["https://i.ibb.co/k2KTmkw1/image.png", "https://i.ibb.co/0kLVckr/Whats-App-Image-2026-04-05-at-12-18-24-PM.jpg"], desc: "Varita masajeadora ergonómica de silicona líquida. Emite pulsaciones profundas perfectas para liberar estrés corporal o estimular zonas erógenas." },
+            { id: 49, name: "Vibrador Flexible Punto G Luxury", price: "$27.99", category: "Vibradores", images: ["https://i.ibb.co/0VGCy7Ym/510uc02j-XML-AC-SX679.jpg", "https://i.ibb.co/Sw4NgBQp/61ir7r-A6-A1-L-AC-SL1500.jpg"], desc: "Eje flexible que se amolda a los movimientos internos garantizando estimulación anatómica directa del punto G. Recargable y empaque discreto." },
+            { id: 50, name: "Estimulador Placer a tu Medida 10V", price: "$29.99", category: "Vibradores", images: ["https://i.ibb.co/h1WDsYvQ/image.png", "https://i.ibb.co/ZRzCR0GY/image.png"], desc: "Elegante estimulador táctil de textura sedosa de sílice y ABS. Posee 10 modos de vibración silenciosos y es 100% impermeable." },
+            { id: 51, name: "Vibrador Conejo Doble Motor Luxe", price: "$25.99", category: "Vibradores", images: ["https://i.ibb.co/8nZt90tP/image.png", "https://i.ibb.co/nMT7g5bY/image.png"], desc: "Consolador de doble acción con motores independientes para el clítoris y punto G. Certificación IPX7 impermeable, silicona médica." },
+            { id: 52, name: "Vibrador Conejo Morado Profundo", price: "$25.99", category: "Vibradores", images: ["https://i.ibb.co/WvVMbvT6/image.png", "https://i.ibb.co/hRCpxrtJ/image.png"], desc: "El clásico infalible morado. Diseño curvo ergonómico para estimulación combinada (punto G y clítoris) con 10 frecuencias de vibración." },
+            { id: 53, name: "Anillo Vibrador Doble Forma de Rosa", price: "$25.99", category: "Masculino", images: ["https://i.ibb.co/bjx0pTTv/image.png", "https://i.ibb.co/rKCKK4dx/image.png"], desc: "Doble anillo de constricción y retraso para parejas. Incorpora un sutil vibrador en forma de rosa que masajea el clítoris durante el juego." },
+            { id: 54, name: "Succionador Ondas de Aire Rosa Mini", price: "$24.99", category: "Vibradores", images: ["https://i.ibb.co/ycn6FF22/image.png", "https://i.ibb.co/wNYK0RnZ/image.png"], desc: "Dispositivo compacto (6.2x5.8cm) ideal para clítoris o pezones. Genera ondas de presión neumática y 10 ritmos alternables." },
+            { id: 55, name: "Estimulador Doble Inteligente App", price: "$28.99", category: "Vibradores", images: ["https://i.ibb.co/7JdxjpC2/image.png", "https://i.ibb.co/39BNsvL8/image.png"], desc: "Lleva el juego a distancia al siguiente nivel. Controlable mediante Bluetooth con tu smartphone para transferir patrones interactivos." },
+            { id: 56, name: "Vibrador Dual App Control Remoto", price: "$30.00", category: "Vibradores", images: ["https://i.ibb.co/dwGVxn2L/Gemini-Generated-Image-belodgbelodgbelo.png"], desc: "Diseño ergonómico en forma de 'U' para estimulación coordinada interna y externa. Cárgale patrones desde cualquier lugar del mundo." },
+            { id: 57, name: "Bomba Masculina Alta Intensidad", price: "$27.00", category: "Masculino", images: ["https://i.ibb.co/gZBfQxgN/image.png", "https://i.ibb.co/Ng1hQGrG/image.png"], desc: "Bomba de succión clínica de vacío regulable. Fomenta el influjo sanguíneo aportando rigidez robusta, volumen temporal y entrenamiento íntimo." },
+            { id: 58, name: "Set Bondage Rosado 3 Piezas", price: "$17.99", category: "Bondage", images: ["https://i.ibb.co/yFq6X3Xz/480625177-952949890277126-302078502462773958-n-jpg.webp", "https://i.ibb.co/J4yNtBg/61-YYMmdm-WYL-AC-SX679.jpg"], desc: "Kit introductorio sensual color rosa ideal para juegos de sumisión. Incluye fusta flexible, esposas blandas y un confortable antifaz opaco." },
+            { id: 59, name: "Arnés con Dildo Realista Mars", price: "$27.99", category: "Vibradores", images: ["https://i.ibb.co/Cs7yrw98/1002147630.jpg", "https://i.ibb.co/Lhgcwm4P/1002147638.jpg"], desc: "Pantalón de arnés ajustable con dildo realista Mars integrado (incluye testículos y ventosa independiente). Compatible con lubricante acuoso." },
+            { id: 60, name: "Magical Kiss Boca de Oral Real", price: "$29.99", category: "Masculino", images: ["https://i.ibb.co/zTnVvB5z/41-Cg-RIU9-ZDL-AC.jpg", "https://i.ibb.co/WWFhHbyP/3563743-original.jpg"], desc: "Masturbador masculino de Cyber Skin hiperrealista de 24 cm de largo. Emula perfectamente la anatomía y pliegues de una boca real." },
+            { id: 61, name: "Dildo Consolador Vibrador Realista", price: "$35.00", category: "Vibradores", images: ["https://i.ibb.co/4n5y3cRS/image.png", "https://i.ibb.co/cKHKy8Xf/image.png"], desc: "Impresionante dildo realista de 20cm de largo y 3.5cm de diámetro con control remoto inalámbrico. Dispone de 6 intensidades y 10 excitantes modos." },
+            { id: 62, name: "Vibrador Clítoris y PuntoG Doble", price: "$29.99", category: "Vibradores", images: ["https://i.ibb.co/5XcsvTmQ/image.png", "https://i.ibb.co/WWStvH0P/image.png"], desc: "Pequeño pero adorable estimulador de silicona médica recargable. Cuenta con 12 modos personalizables para masajear simultáneamente múltiples zonas." },
+            { id: 63, name: "Dildo Vibrador Consolador Pene Realista", price: "$27.99", category: "Vibradores", images: ["https://i.ibb.co/WWNLx3Gd/image.png", "https://i.ibb.co/8gxc3vDJ/image.png", "https://i.ibb.co/hxYm4QtH/image.png", "https://i.ibb.co/4wfFmKrK/image.png"], desc: "Disfrútala a solas o en pareja. Largo total: 19 cm, Largo Introducible: 14 cm, Ancho: 3.5 cm. Compatible con arnés y adherible a cualquier superficie. ¡Con vibración incluida para el máximo placer!" },
+            { id: 64, name: "Spray Retardante Maxman", price: "$20.00", category: "Cuidado y Salud", images: ["https://i.ibb.co/RphJ8ZBQ/image.png", "https://i.ibb.co/1YBK46Sv/image.png", "https://i.ibb.co/R4vPwjSG/image.png", "https://i.ibb.co/KpGVwChd/image.png", "https://i.ibb.co/prX6qj7t/image.png"], desc: "Descubre una excitación duradera y una solución completa para una potencia óptima. Nuestra fórmula avanzada con ingredientes naturales de alta calidad aumenta tu resistencia y vitalidad durante todo el día." },
+            { id: 65, name: "Viga 1 Million Spray Fuerte", price: "$19.99", category: "Cuidado y Salud", images: ["https://i.ibb.co/3ypnG4Cm/image.png", "https://i.ibb.co/Kz78xfrd/image.png", "https://i.ibb.co/dwhHsXWZ/image.png", "https://i.ibb.co/20Nh114c/image.png"], desc: "Ayuda a mejorar la confianza y el control con un soporte de rendimiento de larga duración. Fórmula de acción rápida, textura de secado rápido y no pegajosa en una botella compacta y discreta." },
+            { id: 66, name: "Super VIGA 84000 Spray Retardante", price: "$19.99", category: "Cuidado y Salud", images: ["https://i.ibb.co/DgCr0x4H/image.png", "https://i.ibb.co/MkWN2BR2/image.png", "https://i.ibb.co/20x2hK1H/image.png"], desc: "Toma el control en la cama y disfruta de una intimidad más duradera. Diseñado a base de lidocaína para reducir la hipersensibilidad, retrasar la eyaculación precoz y aumentar la confianza sexual de forma segura." },
+            { id: 67, name: "Spray Retardante SuperViga 150000", price: "$19.99", category: "Cuidado y Salud", images: ["https://i.ibb.co/vCm1SMcN/image.png", "https://i.ibb.co/sdxTqBPW/image.png", "https://i.ibb.co/HDC1db8p/image.png"], desc: "Fórmula 100% original sin efectos secundarios. Reduce la sensibilidad brindando una erección más firme y prolongando la vida sexual al menos 40 minutos. Aplícalo 1 minuto antes de la relación en el glande." },
+            { id: 68, name: "Vibrador Estimulador Lengua 4 en 1", price: "$45.00", category: "Vibradores", images: ["https://i.ibb.co/60S13bPy/image.png", "https://i.ibb.co/39v3WdLd/image.png", "https://i.ibb.co/Y42kx0Pw/image.png", "https://i.ibb.co/cXMXQhch/image.png", "https://i.ibb.co/nqtJMdr2/image.png"], desc: "Espectacular dildo y estimulador rosa 4 en 1 para mujeres. Cuenta con 10 modos de lamer interactivos y 10 modos de vibración potentes enfocados en el punto G y el clítoris. Diámetro: 3.5 cm." },
+            { id: 69, name: "Bomba de Vacío Handsome Up", price: "$29.99", category: "Masculino", images: ["https://i.ibb.co/twqKb0LT/image.png", "https://i.ibb.co/zhw1PDTy/image.png", "https://i.ibb.co/MDMPDH0q/image.png", "https://i.ibb.co/7tqCPMFs/image.png"], desc: "Consigue una erección especialmente firme y duradera. Su cilindro transparente con escala de medición estimula el flujo sanguíneo por vacío manual. Cuenta con válvula de seguridad rápida." },
+            { id: 71, name: "Vibrador Cola de Sirena Recargable", price: "$35.99", category: "Vibradores", images: ["https://i.ibb.co/QFdymCVD/image.png", "https://i.ibb.co/PZH7FDmp/image.png", "https://i.ibb.co/vvmxy0GV/image.png", "https://i.ibb.co/9mkvsPHJ/image.png", "https://i.ibb.co/GQ43CvXS/image.png", "https://i.ibb.co/Txc7qj3d/image.png", "https://i.getmyimg.com/K/KcVC9wtN.png", "https://i.ibb.co/ZzfkT9x7/image.png", "https://i.ibb.co/Xnv8ckF/image.png"], desc: "Silencioso juguete en forma de pescadito diseñado para explorar 10 modalidades de vibración. Hecho de silicona premium, totalmente impermeable y recargable con control remoto a distancia." }
+        ];
+
+        let currentCategory = "Todos";
+        let activeProduct = null;
+        let activeImgIndex = 0;
+
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            grid.innerHTML = "";
+
+            const filtered = PRODUCTS.filter(p => {
+                const matchesCategory = (currentCategory === "Todos" || p.category === currentCategory);
+                const matchesSearch = p.name.toLowerCase().includes(searchVal);
+                return matchesCategory && matchesSearch;
+            });
+
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = "product-card";
+                card.innerHTML = `
+                    <div>
+                        <div class="product-img-wrapper" onclick="openProduct(${p.id})">
+                            <div class="product-img" style="background-image: url('${p.images[0]}')"></div>
+                        </div>
+                        <div class="product-name">${p.name}</div>
+                        <div class="product-price">${p.price}</div>
+                    </div>
+                    <button class="details-btn" onclick="openProduct(${p.id})">Ver detalles</button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterProducts() {
+            renderProducts();
+        }
+
+        function selectCategory(cat) {
+            currentCategory = cat;
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => {
+                if(btn.textContent === cat) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+            renderProducts();
+        }
+
+        function openProduct(id) {
+            activeProduct = PRODUCTS.find(p => p.id === id);
+            if (!activeProduct) return;
+            
+            activeImgIndex = 0;
+            document.getElementById('modalTitle').textContent = activeProduct.name;
+            document.getElementById('modalPrice').textContent = activeProduct.price;
+            document.getElementById('modalDesc').textContent = activeProduct.desc;
+            
+            const track = document.getElementById('sliderTrack');
+            track.innerHTML = "";
+            activeProduct.images.forEach(imgUrl => {
+                const container = document.createElement('div');
+                container.className = "modal-img-container";
+                container.innerHTML = `<div class="modal-img" style="background-image: url('${imgUrl}')"></div>`;
+                track.appendChild(container);
+            });
+
+            const encodedMsg = encodeURIComponent("Hola, quiero información del producto: " + activeProduct.name);
+            document.getElementById('whatsappModalLink').href = "https://wa.me/593969999363?text=" + encodedMsg;
+            
+            updateSliderPosition();
+            toggleModal(true);
+        }
+
+        function updateSliderPosition() {
+            const track = document.getElementById('sliderTrack');
+            track.style.transform = `translateX(-${activeImgIndex * 100}%)`;
+        }
+
+        function changeImage(direction) {
+            if (!activeProduct) return;
+            activeImgIndex += direction;
+            if (activeImgIndex >= activeProduct.images.length) activeImgIndex = 0;
+            if (activeImgIndex < 0) activeImgIndex = activeProduct.images.length - 1;
+            updateSliderPosition();
+        }
+
+        function toggleModal(show) {
+            document.getElementById('productModal').style.display = show ? 'flex' : 'none';
+        }
+
+        function closeModal(e) {
+            if (e.target.id === 'productModal') toggleModal(false);
+        }
+
+        renderProducts();
+    </script>
+</body>
+</html>
